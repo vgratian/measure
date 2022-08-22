@@ -8,10 +8,13 @@
 
 static int run_command(char**);
 
-// Executes the command 'cmd' with the given arguments and returns
-// a pointer to the struct 'rusage' with data about resources used
-// by the command. On failure, it writes an error message to stderr
-// and returns NULL.
+// Executes the command 'cmd' and returns resource usage data 'rusage', even
+// when executing the command failed or it exited with errors. Returns NULL
+// if argument is invalid or unexpected error occured before executing cmd.
+//
+// Argument:
+//    - cmd     NULL-terminated array of strings. First element is the program
+//              name or path followed by its arguments. 
 struct rusage *measure(char **cmd) {
 
 	struct rusage *r;
@@ -56,7 +59,7 @@ static int run_command(char **cmd) {
         return 1;
     }
 
-	// if child exited with abnormally, print warning, but continue
+	// if child exited abnormally, print warning, but continue
 	if (exit_code != 0) {
         fprintf(stderr, "command (PID=%d) exited with %d\n", pid, exit_code);
     }

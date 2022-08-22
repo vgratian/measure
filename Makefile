@@ -1,14 +1,15 @@
 .PHONY: all clean
 
-CC 		:= gcc
+CC		:= gcc
 CFLAGS	:= -std=gnu99 -pedantic -Wall
 
-SRC		:= main.c measure.h measure.c
+SRC		:= measure.c print.c
+HDR		:= measure.h print.h
 
 all: measure
 
-measure: ${SRC}
-	${CC} ${CFLAGS} main.c measure.c -o $@
+measure: main.c ${SRC} ${HDR}
+	${CC} ${CFLAGS} main.c ${SRC} -o $@
 
 clean:
-	@rm -f measure
+	rm -fv measure
