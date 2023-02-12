@@ -5,36 +5,53 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
+#include <time.h>
+
+#define BILLION 1000000000.0
 
 static int run_command(char**);
 
 // Executes the command 'cmd' and returns resource usage data 'rusage', even
-// when executing the command failed or it exited with errors. Returns NULL
+// when executing the command failed or it exited with errors. Returns non-0
 // if argument is invalid or unexpected error occured before executing cmd.
 //
-// Argument:
+// Arguments:
 //    - cmd     NULL-terminated array of strings. First element is the program
 //              name or path followed by its arguments. 
-struct rusage *measure(char **cmd) {
+//	  - r		Pointer to struct that will contain resource usage stats
+//    - t		Pointer to double that will contain wall time in seconds 
+int measure(char **cmd, struct rusage *r, double *t) {
 
-	struct rusage *r;
+	struct timespec s, e;
+
+	if ( clock_gettime(CLOCK_REALTIME, &s) != 0 ) {
+		perror("clock_gettime");
+		return 1;
+	}
 
 	if ( run_command(cmd) != 0 ) {
-		return NULL;
+		return 1;
+	}
+
+	if ( clock_gettime(CLOCK_REALTIME, &e) != 0 ) {
+		perror("clock_gettime");
+		return 1;
 	}
 
 	r = malloc(sizeof(struct rusage));
 	if ( r == NULL ) {
 		perror("malloc");
-		return NULL;
+		return 1;
 	}
 
 	if ( getrusage(RUSAGE_CHILDREN, r) != 0 ) {
 		perror("getrusage");
-		return NULL;
+		return 1;
 	}
 
-	return r;
+	*t = (double) (e.tv_sec - s.tv_sec ) + (double) (e.tv_nsec - s.tv_nsec) / BILLION;
+
+	return 0;
 }
 
 // Execute command in background and wait for it to exit.

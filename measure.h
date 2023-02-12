@@ -1,1 +1,1 @@
-struct rusage *measure(char**);
+int measure(char**, struct rusage*, double*);

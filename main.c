@@ -28,9 +28,10 @@ void help() {
     " the same order). For detailed info about them, see getrusage(2)\n"
     "\n"
     "Resources:\n"
-    "   total      Total CPU time (user + sys time)\n"
-    "   user       User CPU time in seconds (microsecond precision)\n"
-    "   sys        System CPU time in seconds (microsecond precision)\n"
+    "   cpu time   Total CPU time (user + sys time)\n"
+    "    user      User CPU time in seconds (microsecond precision)\n"
+    "    sys       System CPU time in seconds (microsecond precision)\n"
+    "   wall time  Elapsed real time in seconds\n"
     "   maxrss     Maximum Resident Set Size in kilobytes\n"
     "   minflt     Soft page faults\n"
     "   majflt     Hard page faults\n"
@@ -48,8 +49,10 @@ void help() {
 int main(int argc, char *argv[]) {
 
     char *cmd[argc];
-	struct rusage *r;
-    int pprint=0, i=0, k=1;
+    int pprint=0;		// use pprint or not, 0=false
+	int i=0, k=1;
+	struct rusage r;	// resource usage
+	double t;			// wall time
 
     // check arguments, at least one argument should be provided
     if (argc == 1) {
@@ -73,13 +76,11 @@ int main(int argc, char *argv[]) {
     }
     cmd[i] = NULL; // should be NULL-terminated
 
-	r = measure(cmd);
-	if ( r == NULL ) {
+	if ( measure(cmd, &r, &t) != 0 ) {
 		return 1;
 	}
 
-	rusage_print(r, pprint);
-	free(r);
+	rusage_print(&r, t, pprint);
 
     return 0;
 }
