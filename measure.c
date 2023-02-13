@@ -38,11 +38,11 @@ int measure(char **cmd, struct rusage *r, double *t) {
 		return 1;
 	}
 
-	r = malloc(sizeof(struct rusage));
-	if ( r == NULL ) {
-		perror("malloc");
-		return 1;
-	}
+	//r = malloc(sizeof(struct rusage));
+	//if ( r == NULL ) {
+	//	perror("malloc");
+	//	return 1;
+	//}
 
 	if ( getrusage(RUSAGE_CHILDREN, r) != 0 ) {
 		perror("getrusage");

@@ -19,10 +19,10 @@ void rusage_print(struct rusage *r, double t, int pretty) {
 }
 
 void rusage_print_plain(struct rusage *r, double t_wall, double t_usr, double t_sys) {
-    printf("%.6lf", t_usr+t_sys);
-    printf(" %.6lf", t_usr);
-    printf(" %.6lf", t_sys);
-    printf(" %.6lf", t_wall);
+    printf("%.10lf", t_usr+t_sys);
+    printf(" %.10lf", t_usr);
+    printf(" %.10lf", t_sys);
+    printf(" %.10lf", t_wall);
     printf(" %ld", r->ru_maxrss);
     printf(" %ld", r->ru_minflt);
     printf(" %ld", r->ru_majflt);
@@ -34,10 +34,10 @@ void rusage_print_plain(struct rusage *r, double t_wall, double t_usr, double t_
 }
 
 void rusage_print_pretty(struct rusage *r, double t_wall, double t_usr, double t_sys) {
-    printf("cpu time  %.6lf\n", t_usr+t_sys);
-    printf(" user     %.6lf\n", t_usr);
-    printf(" sys      %.6lf\n", t_sys);
-    printf("wall time %.6lf\n", t_wall);
+    printf("cpu time  %.10lf\n", t_usr+t_sys);
+    printf(" user     %.10lf\n", t_usr);
+    printf(" sys      %.10lf\n", t_sys);
+    printf("wall time %.10lf\n", t_wall);
     printf("max rss   %ld\n", r->ru_maxrss);
     printf("minflt    %ld\n", r->ru_minflt);
     printf("majflt    %ld\n", r->ru_majflt);

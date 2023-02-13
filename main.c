@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/resource.h>
+#include <errno.h>
 
 #include "measure.h"
 #include "print.h"
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
     char *cmd[argc];
     int pprint=0;		// use pprint or not, 0=false
 	int i=0, k=1;
-	struct rusage r;	// resource usage
+	struct rusage *r;	// resource usage
 	double t;			// wall time
 
     // check arguments, at least one argument should be provided
@@ -76,11 +77,19 @@ int main(int argc, char *argv[]) {
     }
     cmd[i] = NULL; // should be NULL-terminated
 
-	if ( measure(cmd, &r, &t) != 0 ) {
+	r = malloc(sizeof(struct rusage));
+	if ( r == NULL ) {
+		perror("malloc");
 		return 1;
 	}
 
-	rusage_print(&r, t, pprint);
+	if ( measure(cmd, r, &t) != 0 ) {
+		return 1;
+	}
+
+	rusage_print(r, t, pprint);
+
+	free(r);
 
     return 0;
 }
